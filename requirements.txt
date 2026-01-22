@@ -1,10 +1,13 @@
 fastapi
 uvicorn[standard]
 python-multipart
-pandas
-torch
-torchvision
+
 numpy
 pillow
 scipy
 opencv-python-headless
+pandas
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.2.2+cpu
+torchvision==0.17.2+cpu

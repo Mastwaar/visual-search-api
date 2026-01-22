@@ -5,7 +5,7 @@ python-multipart
 numpy
 pillow
 scipy
-opencv-python-headless
+av
 pandas
 
 --extra-index-url https://download.pytorch.org/whl/cpu

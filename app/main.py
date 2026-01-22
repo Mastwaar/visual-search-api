@@ -1,7 +1,7 @@
 import os
 import pickle
 import numpy as np
-import cv2
+import av
 from typing import Dict
 from io import BytesIO
 
@@ -94,30 +94,44 @@ async def search_image(
     matches = top_k_similar(qvec, image_db, k=top_k)
     return {"results": [{**enrich(p), "score": s} for p, s in matches]}
 
-def extract_frames(video_bytes: bytes, frame_interval: int = 10):
-    tmp = "tmp_video.mp4"
-    with open(tmp, "wb") as f:
-        f.write(video_bytes)
+# def extract_frames(video_bytes: bytes, frame_interval: int = 10):
+#     tmp = "tmp_video.mp4"
+#     with open(tmp, "wb") as f:
+#         f.write(video_bytes)
 
-    cap = cv2.VideoCapture(tmp)
+#     cap = cv2.VideoCapture(tmp)
+#     frames = []
+#     count = 0
+#     while cap.isOpened():
+#         ok, frame = cap.read()
+#         if not ok:
+#             break
+#         if count % frame_interval == 0:
+#             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#             frames.append(Image.fromarray(rgb))
+#         count += 1
+
+#     cap.release()
+#     try:
+#         os.remove(tmp)
+#     except:
+#         pass
+
+#     return frames
+
+def extract_frames(video_bytes: bytes, frame_interval: int = 10):
     frames = []
+    container = av.open(BytesIO(video_bytes))
+
     count = 0
-    while cap.isOpened():
-        ok, frame = cap.read()
-        if not ok:
-            break
+    for frame in container.decode(video=0):
         if count % frame_interval == 0:
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frames.append(Image.fromarray(rgb))
+            img = frame.to_image()  # PIL Image
+            frames.append(img)
         count += 1
 
-    cap.release()
-    try:
-        os.remove(tmp)
-    except:
-        pass
-
     return frames
+
 
 @app.post("/search/video")
 # async def search_video(

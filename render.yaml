@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: visual-search-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash start.sh
+    envVars:
+      - key: APP_API_KEY
+        value: 123456
